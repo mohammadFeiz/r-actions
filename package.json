@@ -1,0 +1,23 @@
+{
+  "name": "r-actions",
+  "version": "1.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mohammadFeiz/r-actions.git"
+  },
+  "dependencies":{
+    "jquery":"3.4.1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mohammadFeiz/r-actions/issues"
+  },
+  "homepage": "https://github.com/mohammadFeiz/r-actions#readme"
+}
