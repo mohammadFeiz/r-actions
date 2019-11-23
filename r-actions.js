@@ -11,6 +11,9 @@ export default class RActions{
     }
     return value;
   }
+  getCopy(obj){
+    return JSON.parse(JSON.stringify(obj))
+  }
   setValueByField(obj,field,value){
     var fields = field.split('.');
     var node = obj;
@@ -56,9 +59,18 @@ export default class RActions{
     val = val < start?start:val;
     return val;
   }
+  getPercentByValue(value,start,end){
+    return 100 * (value - start) / (end - start);
+  }
+  getValueByPercent(percent,start,end){
+    return start + (percent * (end - start) / 100);
+  }
   getStartByStep(start,step){
     var a = Math.round((start - step) / step) * step; 
     while(a < start){a += step;}
     return a;
+  }
+  fix(number,a = 6){
+    return parseFloat((number).toFixed(a));
   }
 }

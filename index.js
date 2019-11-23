@@ -49,6 +49,11 @@ function () {
       return value;
     }
   }, {
+    key: "getCopy",
+    value: function getCopy(obj) {
+      return JSON.parse(JSON.stringify(obj));
+    }
+  }, {
     key: "setValueByField",
     value: function setValueByField(obj, field, value) {
       var fields = field.split('.');
@@ -129,6 +134,16 @@ function () {
       return val;
     }
   }, {
+    key: "getPercentByValue",
+    value: function getPercentByValue(value, start, end) {
+      return 100 * (value - start) / (end - start);
+    }
+  }, {
+    key: "getValueByPercent",
+    value: function getValueByPercent(percent, start, end) {
+      return start + percent * (end - start) / 100;
+    }
+  }, {
     key: "getStartByStep",
     value: function getStartByStep(start, step) {
       var a = Math.round((start - step) / step) * step;
@@ -138,6 +153,12 @@ function () {
       }
 
       return a;
+    }
+  }, {
+    key: "fix",
+    value: function fix(number) {
+      var a = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 6;
+      return parseFloat(number.toFixed(a));
     }
   }]);
 
