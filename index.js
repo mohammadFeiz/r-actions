@@ -268,18 +268,21 @@ var RActions = function RActions() {
       var MaxLevel = random ? Math.ceil(Math.random() * maxLevel) : maxLevel;
 
       for (var i = 0; i < Length; i++) {
-        var obj = {};
+        var obj = {
+          nestedIndex: (index ? index + ',' : '') + i
+        };
 
         for (var j = 0; j < fields.length; j++) {
-          var field = fields[j];
-          obj[field] = field + index + i;
+          var field = typeof fields[j] === 'function' ? fields[j](obj.nestedIndex) : fields[j];
+          obj[field] = field + index + ',' + i;
         }
 
-        obj[childsField] = [];
+        var ChildsField = typeof ChildsField === 'function' ? childsField(obj.nestedIndex) : childsField;
+        obj[ChildsField] = [];
         json.push(obj);
 
         if (level < MaxLevel - 1) {
-          msf(obj.childs, length, maxLevel, fields, childsField, index + i, level + 1);
+          msf(obj[ChildsField], length, maxLevel, fields, childsField, index + i, level + 1);
         }
       }
     }

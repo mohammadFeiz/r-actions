@@ -147,23 +147,26 @@ export default class RActions{
       function msf(json,length,maxLevel,fields,childsField,index = '',level = 0){
         var Length = random?Math.floor(Math.random() * length):length;
         var MaxLevel = random?Math.ceil(Math.random() * maxLevel):maxLevel;
+
         for(var i = 0; i < Length; i++){
-          var obj = {};
-          for(var j = 0; j < fields.length; j++){
-              var field = fields[j];
-              obj[field] = field + index + i;
-          }
-          obj[childsField] = [];
-          json.push(obj);
-          if(level < MaxLevel - 1){
-              msf(obj.childs,length,maxLevel,fields,childsField,index + i,level + 1);
-          }
+            var obj = {nestedIndex : (index?index + ',':'') + i};
+            for(var j = 0; j < fields.length; j++){
+                var field = typeof fields[j] === 'function'?fields[j](obj.nestedIndex):fields[j];
+
+                obj[field] = field + index + ',' + i;
+            }
+            var ChildsField = typeof ChildsField === 'function'?childsField(obj.nestedIndex):childsField;
+            obj[ChildsField] = [];
+            json.push(obj);
+            if(level < MaxLevel - 1){
+                msf(obj[ChildsField],length,maxLevel,fields,childsField,index + i,level + 1);
+            }
         }
-      }
-      var model = [];
-      var {length = 3,level = 6,fields = ['name','family'],childsField = 'childs',random,stringify} = x;
-      msf(model,length,level,fields,childsField);
-      return stringify?JSON.stringify(model):model;
+        }
+    var model = [];
+    var {length = 3,level = 6,fields = ['name','family'],childsField = 'childs',random,stringify} = x;
+    msf(model,length,level,fields,childsField);
+    return stringify?JSON.stringify(model):model;
     }
   }
   
