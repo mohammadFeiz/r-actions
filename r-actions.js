@@ -144,28 +144,31 @@ export default class RActions{
       }
     },
     this.compositeGenerator = (x = {})=>{
-      function msf(json,length,maxLevel,fields,childsField,index = '',level = 0){
+      function msf(json,length,maxLevel,index = '',level = 0){
         var Length = random?Math.floor(Math.random() * length):length;
         var MaxLevel = random?Math.ceil(Math.random() * maxLevel):maxLevel;
-
+        var Index = (index !== ''?index + ',':'');
         for(var i = 0; i < Length; i++){
-            var obj = {nestedIndex : (index?index + ',':'') + i};
-            for(var j = 0; j < fields.length; j++){
-                var field = typeof fields[j] === 'function'?fields[j](obj.nestedIndex):fields[j];
-
-                obj[field] = field + index + ',' + i;
-            }
-            var ChildsField = typeof ChildsField === 'function'?childsField(obj.nestedIndex):childsField;
-            obj[ChildsField] = [];
+            var obj = {nestedIndex : Index + i};
             json.push(obj);
             if(level < MaxLevel - 1){
-                msf(obj[ChildsField],length,maxLevel,fields,childsField,index + i,level + 1);
+                var Fields = typeof fields === 'function' ? fields(obj.nestedIndex) : fields;
+                for(var prop in Fields){obj[prop] = Fields[prop];}
+                var ChildsField = typeof ChildsField === 'function'?childsField(obj.nestedIndex):childsField;
+                obj[ChildsField] = [];
+                msf(obj[ChildsField],length,maxLevel,Index + i,level + 1);
+            }
+            else{
+              var LeafFields = typeof leafFields === 'function'?leafFields(obj.nestedIndex):leafFields;
+              for(var prop in LeafFields){
+                obj[prop] = LeafFields[prop];
+              }
             }
         }
         }
     var model = [];
-    var {length = 3,level = 6,fields = ['name','family'],childsField = 'childs',random,stringify} = x;
-    msf(model,length,level,fields,childsField);
+    var {length = 3,level = 3,fields = {},childsField = 'childs',random,stringify,leafFields = {}} = x;
+    msf(model,length,level);
     return stringify?JSON.stringify(model):model;
     }
   }

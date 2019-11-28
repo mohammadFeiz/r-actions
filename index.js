@@ -261,28 +261,35 @@ var RActions = function RActions() {
   }, this.compositeGenerator = function () {
     var x = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-    function msf(json, length, maxLevel, fields, childsField) {
-      var index = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : '';
-      var level = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : 0;
+    function msf(json, length, maxLevel) {
+      var index = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
+      var level = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
       var Length = random ? Math.floor(Math.random() * length) : length;
       var MaxLevel = random ? Math.ceil(Math.random() * maxLevel) : maxLevel;
+      var Index = index !== '' ? index + ',' : '';
 
       for (var i = 0; i < Length; i++) {
         var obj = {
-          nestedIndex: (index ? index + ',' : '') + i
+          nestedIndex: Index + i
         };
-
-        for (var j = 0; j < fields.length; j++) {
-          var field = typeof fields[j] === 'function' ? fields[j](obj.nestedIndex) : fields[j];
-          obj[field] = field + index + ',' + i;
-        }
-
-        var ChildsField = typeof ChildsField === 'function' ? childsField(obj.nestedIndex) : childsField;
-        obj[ChildsField] = [];
         json.push(obj);
 
         if (level < MaxLevel - 1) {
-          msf(obj[ChildsField], length, maxLevel, fields, childsField, index + i, level + 1);
+          var Fields = typeof fields === 'function' ? fields(obj.nestedIndex) : fields;
+
+          for (var prop in Fields) {
+            obj[prop] = Fields[prop];
+          }
+
+          var ChildsField = typeof ChildsField === 'function' ? childsField(obj.nestedIndex) : childsField;
+          obj[ChildsField] = [];
+          msf(obj[ChildsField], length, maxLevel, Index + i, level + 1);
+        } else {
+          var LeafFields = typeof leafFields === 'function' ? leafFields(obj.nestedIndex) : leafFields;
+
+          for (var prop in LeafFields) {
+            obj[prop] = LeafFields[prop];
+          }
         }
       }
     }
@@ -291,14 +298,16 @@ var RActions = function RActions() {
     var _x$length = x.length,
         length = _x$length === void 0 ? 3 : _x$length,
         _x$level = x.level,
-        level = _x$level === void 0 ? 6 : _x$level,
+        level = _x$level === void 0 ? 3 : _x$level,
         _x$fields = x.fields,
-        fields = _x$fields === void 0 ? ['name', 'family'] : _x$fields,
+        fields = _x$fields === void 0 ? {} : _x$fields,
         _x$childsField = x.childsField,
         childsField = _x$childsField === void 0 ? 'childs' : _x$childsField,
         random = x.random,
-        stringify = x.stringify;
-    msf(model, length, level, fields, childsField);
+        stringify = x.stringify,
+        _x$leafFields = x.leafFields,
+        leafFields = _x$leafFields === void 0 ? {} : _x$leafFields;
+    msf(model, length, level);
     return stringify ? JSON.stringify(model) : model;
   };
 };
