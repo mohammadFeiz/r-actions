@@ -115,8 +115,6 @@ var RActions = function RActions() {
       }
     }
 
-    val = val > end ? end : val;
-    val = val < start ? start : val;
     return val;
   };
 
