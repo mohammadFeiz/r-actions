@@ -56,8 +56,6 @@ export default class RActions{
         val = parseFloat(value);
       }
     }
-    val = val > end?end:val; 
-    val = val < start?start:val;
     return val;
   }
   this.getPercentByValue = (value,start,end)=>{
