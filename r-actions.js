@@ -46,7 +46,11 @@ export default class RActions{
   this.getValueByRange = (value,start,end)=>{
     var val;
     if(value === undefined){return start}
-    if(typeof value === 'number'){val = value;}
+    var type = typeof value;
+    if(type === 'function'){
+      val = value(start,end);
+    }
+    else if(type === 'number'){val = value;}
     else{
       if(value.indexOf('%') !== -1){
         var range = end - start;
