@@ -63,6 +63,10 @@ var RActions = function RActions() {
     return obj;
   };
 
+  this.isMobile = function () {
+    return 'ontouchstart' in document.documentElement;
+  };
+
   this.eventHandler = function (selector, event, action) {
     var type = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'bind';
     var me = {
@@ -70,7 +74,7 @@ var RActions = function RActions() {
       mousemove: "touchmove",
       mouseup: "touchend"
     };
-    event = 'ontouchstart' in document.documentElement ? me[event] : event;
+    event = _this.isMobile() ? me[event] : event;
     var element = typeof selector === "string" ? selector === "window" ? (0, _jquery.default)(window) : (0, _jquery.default)(selector) : selector;
     element.unbind(event, action);
 
@@ -80,9 +84,14 @@ var RActions = function RActions() {
   };
 
   this.getClient = function (e) {
-    return {
-      x: e.clientX === undefined ? e.changedTouches[0].clientX : e.clientX,
-      y: e.clientY === undefined ? e.changedTouches[0].clientY : e.clientY
+    var mobile = _this.isMobile();
+
+    return mobile ? {
+      x: e.changedTouches[0].clientX,
+      y: e.changedTouches[0].clientY
+    } : {
+      x: e.clientX,
+      y: e.clientY
     };
   };
 

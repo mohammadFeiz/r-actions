@@ -25,9 +25,10 @@ export default class RActions{
     node[fields[fields.length - 1]] = value;
     return obj;
   }
+  this.isMobile = ()=>'ontouchstart' in document.documentElement;
   this.eventHandler = (selector, event, action,type = 'bind')=> {
     var me = { mousedown: "touchstart", mousemove: "touchmove", mouseup: "touchend" };
-    event = 'ontouchstart' in document.documentElement ? me[event] : event;
+    event = this.isMobile() ? me[event] : event;
     var element = typeof selector === "string"? 
     (selector === "window"?$(window):$(selector)):
     selector; 
@@ -35,10 +36,10 @@ export default class RActions{
     if(type === 'bind'){element.bind(event, action)}
   }
   this.getClient = (e)=>{
-    return {
-      x: e.clientX === undefined?e.changedTouches[0].clientX:e.clientX, 
-      y: e.clientY===undefined?e.changedTouches[0].clientY:e.clientY 
-    };
+    var mobile = this.isMobile();
+    return mobile?
+    {x: e.changedTouches[0].clientX,y:e.changedTouches[0].clientY }:
+    {x:e.clientX,y:e.clientY}
   }
   this.getLineBySMA = ({p1,measure,angle})=>{
     return {p1,p2:{x:p1.x+(Math.cos(angle * Math.PI / 180) * measure),y:p1.y + (Math.sin(angle * -1 * Math.PI / 180) * measure)}};
@@ -151,27 +152,27 @@ export default class RActions{
         var MaxLevel = random?Math.ceil(Math.random() * maxLevel):maxLevel;
         var Index = (index !== ''?index + ',':'');
         for(var i = 0; i < Length; i++){
-            var obj = {nestedIndex : Index + i};
-            json.push(obj);
-            if(level < MaxLevel - 1){
-                var Fields = typeof fields === 'function' ? fields(obj.nestedIndex) : fields;
-                for(var prop in Fields){obj[prop] = Fields[prop];}
-                var ChildsField = typeof ChildsField === 'function'?childsField(obj.nestedIndex):childsField;
-                obj[ChildsField] = [];
-                msf(obj[ChildsField],length,maxLevel,Index + i,level + 1);
+          var obj = {nestedIndex : Index + i};
+          json.push(obj);
+          if(level < MaxLevel - 1){
+              var Fields = typeof fields === 'function' ? fields(obj.nestedIndex) : fields;
+              for(var prop in Fields){obj[prop] = Fields[prop];}
+              var ChildsField = typeof ChildsField === 'function'?childsField(obj.nestedIndex):childsField;
+              obj[ChildsField] = [];
+              msf(obj[ChildsField],length,maxLevel,Index + i,level + 1);
+          }
+          else{
+            var LeafFields = typeof leafFields === 'function'?leafFields(obj.nestedIndex):leafFields;
+            for(var prop in LeafFields){
+              obj[prop] = LeafFields[prop];
             }
-            else{
-              var LeafFields = typeof leafFields === 'function'?leafFields(obj.nestedIndex):leafFields;
-              for(var prop in LeafFields){
-                obj[prop] = LeafFields[prop];
-              }
-            }
+          }
         }
-        }
-    var model = [];
-    var {length = 3,level = 3,fields = {},childsField = 'childs',random,stringify,leafFields = {}} = x;
-    msf(model,length,level);
-    return stringify?JSON.stringify(model):model;
+      }
+      var model = [];
+      var {length = 3,level = 3,fields = {},childsField = 'childs',random,stringify,leafFields = {}} = x;
+      msf(model,length,level);
+      return stringify?JSON.stringify(model):model;
     }
   }
   
