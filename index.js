@@ -25,7 +25,14 @@ var RActions = function RActions() {
       return undefined;
     }
 
-    var fields = (typeof field === 'function' ? field(obj) : field).split('.');
+    var fieldString = typeof field === 'function' ? field(obj) : field;
+
+    if (!fieldString || typeof fieldString !== 'string') {
+      console.error('r-actions.getValueByField() receive invalid field');
+      return undefined;
+    }
+
+    var fields = fieldString.split('.');
     var value = obj[fields[0]];
 
     if (value === undefined) {
@@ -35,7 +42,7 @@ var RActions = function RActions() {
     for (var i = 1; i < fields.length; i++) {
       value = value[fields[i]];
 
-      if (value === undefined) {
+      if (value === undefined || value === null) {
         return;
       }
     }
