@@ -21,7 +21,7 @@ var RActions = function RActions() {
   _classCallCheck(this, RActions);
 
   this.getValueByField = function (obj, field) {
-    if (!field) {
+    if (!field || field === null) {
       return undefined;
     }
 

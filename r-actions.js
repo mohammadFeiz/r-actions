@@ -2,7 +2,7 @@ import $ from 'jquery';
 export default class RActions{
   constructor(){
     this.getValueByField = (obj,field)=>{
-    if(!field){return undefined;}
+    if(!field || field === null){return undefined;}
     var fields = (typeof field === 'function'?field(obj):field).split('.');
     var value = obj[fields[0]];
     if(value === undefined){return;}
